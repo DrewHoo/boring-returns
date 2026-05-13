@@ -1,0 +1,401 @@
+/* Boring Returns — styles. Believer/McSweeney's-ish: serif headlines,
+   sans body, warm off-white background, sparse rules, lots of breathing
+   room. The data does the work; the chrome stays out of the way. */
+
+:root {
+  --ink: #1a1814;
+  --ink-muted: #5e574a;
+  --bg: #f5efe0;
+  --bg-card: #fbf6e8;
+  --rule: #d8cfb8;
+  --rule-strong: #b0a583;
+  --accent: #1f4e8c;
+  --accent-warm: #8a4e1c;
+  --danger: #c0392b;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Georgia, 'Iowan Old Style', 'Charter', 'Source Serif Pro', serif;
+  font-size: 16px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 28px 96px;
+}
+
+/* --- Masthead ------------------------------------------------------- */
+.masthead h1 {
+  font-family: 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+  margin: 0 0 18px 0;
+  border-bottom: 1px solid var(--rule-strong);
+  padding-bottom: 22px;
+}
+
+.masthead .subhead {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: clamp(15px, 1.6vw, 18px);
+  color: var(--ink-muted);
+  margin: 0 0 22px 0;
+  max-width: 720px;
+  line-height: 1.45;
+}
+
+.masthead .lede {
+  font-size: clamp(15px, 1.6vw, 17px);
+  margin: 0 0 38px 0;
+  max-width: 720px;
+  line-height: 1.65;
+}
+
+/* --- Legend --------------------------------------------------------- */
+.legend {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 14px 18px 16px;
+  margin: 0 0 28px 0;
+}
+.legend-gradient {
+  height: 12px;
+  border-radius: 2px;
+}
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 6px;
+}
+.legend-label-anchor {
+  color: var(--ink);
+  font-weight: 700;
+}
+.legend-caption {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+/* --- Controls ------------------------------------------------------- */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.controls-label {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin-right: 8px;
+}
+.chip-control {
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  font-family: Georgia, serif;
+  font-size: 14px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 80ms, border-color 80ms;
+}
+.chip-control:hover {
+  background: rgba(0,0,0,0.04);
+}
+.chip-control--active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+.share-button {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: Georgia, serif;
+  font-size: 13px;
+  padding: 4px 14px;
+  border-radius: 100px;
+  cursor: pointer;
+}
+.share-button--copied {
+  background: var(--accent);
+  color: white;
+}
+
+/* --- Progress bar -------------------------------------------------- */
+.progress {
+  position: relative;
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  margin: 18px 0 12px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 220ms;
+}
+.progress-label {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  font-family: 'SF Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+/* --- Leaderboard --------------------------------------------------- */
+.leaderboard {
+  margin-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+.row--loading {
+  opacity: 0.55;
+}
+.row--detail {
+  /* The Detail panel below the row doesn't need its own row styling. */
+  display: block;
+}
+.row-symbol {
+  flex: 0 0 130px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink);
+  padding: 0;
+  font-family: Georgia, serif;
+}
+.row-symbol strong {
+  display: block;
+  font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
+  font-size: 13px;
+  font-weight: 700;
+}
+.row-symbol-name {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+.row-chart-wrap {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+.row-chart-wrap--placeholder {
+  height: 26px;
+  background: repeating-linear-gradient(
+    45deg, var(--rule) 0 4px, transparent 4px 8px
+  );
+  opacity: 0.4;
+  border-radius: 2px;
+}
+.row-chart {
+  display: block;
+}
+
+/* --- Tooltip ------------------------------------------------------- */
+.tooltip {
+  background: var(--bg-card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  padding: 10px 12px 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+}
+.tooltip-eyebrow {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin-bottom: 4px;
+}
+.tooltip-headline {
+  font-family: 'Iowan Old Style', Georgia, serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.tooltip-chips {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.chip {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'SF Mono', monospace;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+.chip--null {
+  color: #888;
+  text-shadow: none;
+}
+.chip-value {
+  font-size: 12px;
+  font-weight: 700;
+}
+.chip-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+.chip-label--null {
+  text-decoration: line-through;
+}
+.tooltip-sparkline {
+  display: block;
+  margin: 4px auto 6px;
+}
+.tooltip-caption {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+/* --- Detail panel -------------------------------------------------- */
+.detail {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 18px 18px 16px;
+  margin: 6px 0 14px;
+}
+.detail-chart-wrap {
+  margin-bottom: 14px;
+}
+.detail-chart {
+  display: block;
+}
+.detail-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.detail .stat {
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 10px 12px;
+}
+.detail .stat-value {
+  font-family: 'Iowan Old Style', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.detail .stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.detail .stat-sub {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+.detail-footer {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-muted);
+  margin-top: 8px;
+}
+
+/* --- Methodology --------------------------------------------------- */
+.methodology {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule-strong);
+  max-width: 720px;
+}
+.methodology h3 {
+  font-family: 'Iowan Old Style', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+.methodology p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  margin: 0 0 14px;
+}
+
+/* --- Loading / error ---------------------------------------------- */
+.loading, .error {
+  font-style: italic;
+  color: var(--ink-muted);
+  text-align: center;
+  padding: 28px 0;
+}
+
+/* --- Mobile -------------------------------------------------------- */
+@media (max-width: 720px) {
+  main { padding: 32px 16px 64px; }
+  .row-symbol { flex-basis: 80px; }
+  .row-symbol-name { display: none; }
+  .tooltip-chips { grid-template-columns: repeat(2, 1fr); }
+  .controls-row { gap: 4px; }
+  .chip-control { font-size: 13px; padding: 3px 10px; }
+}
+
+/* Push the giscus comments container away from the leaderboard. */
+#comments {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 28px 60px;
+}
