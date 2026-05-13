@@ -50,14 +50,6 @@ function monthKey(d) {
   return `${y}-${m}`
 }
 
-function std(arr) {
-  if (arr.length < 2) return 0
-  const mean = arr.reduce((a, b) => a + b, 0) / arr.length
-  let s = 0
-  for (const v of arr) s += (v - mean) ** 2
-  return Math.sqrt(s / (arr.length - 1))
-}
-
 export function analyze(rows) {
   // Last daily close is "today's price" for all CAGR-to-today calcs.
   const currentPrice = rows[rows.length - 1].adjClose
@@ -152,12 +144,19 @@ export function analyze(rows) {
     }
   }
 
-  // Boringness: 1 minus normalized std of annualizedToToday. Requires
-  // enough history to be meaningful — tickers under 5y of valid data
-  // get null rather than a spuriously-high score.
+  // Boringness: 1 minus the mean absolute distance from 10%/yr. This
+  // captures both "consistently near the market" AND "low variance" in
+  // one number — a bond fund flat at 3% scores middling (far from 10%),
+  // a wildly-volatile name scores near 0 (high variance), and a
+  // broad-market index that hovers around 10% scores high. Requires
+  // at least 5y of valid data to be meaningful.
+  const NEUTRAL = 0.10
   const validAnn = annualizedToToday.filter(v => v != null)
+  const meanAbsDist = validAnn.length
+    ? validAnn.reduce((a, v) => a + Math.abs(v - NEUTRAL), 0) / validAnn.length
+    : null
   const boringness = validAnn.length >= 60
-    ? Math.max(0, Math.min(1, 1 - std(validAnn) / 0.15))
+    ? Math.max(0, Math.min(1, 1 - meanAbsDist / 0.15))
     : null
 
   return {
