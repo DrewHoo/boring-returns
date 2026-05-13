@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { track } from './analytics.js'
 import Row, { buildGlobalMonths } from './Row.jsx'
 import Detail from './Detail.jsx'
+import BackgroundTimeline from './BackgroundTimeline.jsx'
 import { cagrColor, CAGR_NEUTRAL } from './chart-utils.js'
 
 const SORT_OPTIONS = [
@@ -12,15 +13,15 @@ const SORT_OPTIONS = [
 ]
 
 const FILTER_OPTIONS = [
-  { code: 'all',           label: 'all',         match: () => true },
-  { code: 'stock',         label: 'stocks',      match: c => c === 'stock' },
-  { code: 'etf-broad',     label: 'broad',       match: c => c === 'etf-broad' },
-  { code: 'etf-sector',    label: 'sectors',     match: c => c === 'etf-sector' },
-  { code: 'etf-factor',    label: 'factors',     match: c => c === 'etf-factor' },
-  { code: 'etf-country',   label: 'countries',   match: c => c === 'etf-country' },
-  { code: 'etf-bond',      label: 'bonds',       match: c => c === 'etf-bond' },
-  { code: 'commodity',     label: 'commodities', match: c => c === 'commodity' || c === 'etf-commodity' },
-  { code: 'crypto',        label: 'crypto',      match: c => c === 'crypto' },
+  { code: 'all',           label: 'all',             match: () => true },
+  { code: 'stock',         label: 'stocks',          match: c => c === 'stock' },
+  { code: 'etf-broad',     label: 'broad-market ETFs',  match: c => c === 'etf-broad' },
+  { code: 'etf-sector',    label: 'sector ETFs',        match: c => c === 'etf-sector' },
+  { code: 'etf-factor',    label: 'factor ETFs',        match: c => c === 'etf-factor' },
+  { code: 'etf-country',   label: 'country ETFs',       match: c => c === 'etf-country' },
+  { code: 'etf-bond',      label: 'bond ETFs',          match: c => c === 'etf-bond' },
+  { code: 'commodity',     label: 'commodities',     match: c => c === 'commodity' || c === 'etf-commodity' },
+  { code: 'crypto',        label: 'crypto',          match: c => c === 'crypto' },
 ]
 
 function readInitialState() {
@@ -175,6 +176,20 @@ export default function App() {
 
       <section className="controls">
         <div className="controls-row">
+          <TickerSearch
+            tickers={index?.tickers || []}
+            onSelect={sym => {
+              setSelected(sym)
+              setTimeout(() => {
+                const el = document.querySelector(`[data-row-symbol="${sym}"]`)
+                el?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+              }, 50)
+              track('Search selected', { ticker: sym })
+            }}
+          />
+          <ShareButton />
+        </div>
+        <div className="controls-row">
           <div className="controls-label">sort:</div>
           {SORT_OPTIONS.map(o => (
             <button
@@ -185,7 +200,6 @@ export default function App() {
               {o.label}
             </button>
           ))}
-          <ShareButton />
         </div>
         <div className="controls-row">
           <div className="controls-label">filter:</div>
@@ -218,11 +232,16 @@ export default function App() {
           )}
           {globalMonths && (
             <div className="leaderboard">
+              <BackgroundTimeline globalMonths={globalMonths} />
               {sorted.map(t => {
                 const data = allData[t.symbol]
                 if (!data) {
                   return (
-                    <div className="row row--loading" key={t.symbol}>
+                    <div
+                      className="row row--loading"
+                      key={t.symbol}
+                      data-row-symbol={t.symbol}
+                    >
                       <div className="row-symbol">
                         <strong>{t.symbol}</strong>
                         <span className="row-symbol-name">{t.name}</span>
@@ -250,6 +269,75 @@ export default function App() {
 
       <Methodology generatedAt={index?.generatedAt} tickerCount={index?.tickers?.length} />
     </main>
+  )
+}
+
+function TickerSearch({ tickers, onSelect }) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const inputRef = useRef(null)
+  const wrapRef = useRef(null)
+
+  useEffect(() => {
+    function onDown(e) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false)
+    }
+    window.addEventListener('mousedown', onDown)
+    return () => window.removeEventListener('mousedown', onDown)
+  }, [])
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toUpperCase()
+    if (!q) return tickers.slice(0, 30)
+    return tickers
+      .filter(t =>
+        t.symbol.includes(q) ||
+        (t.name || '').toUpperCase().includes(q)
+      )
+      .slice(0, 30)
+  }, [query, tickers])
+
+  function commit(sym) {
+    onSelect(sym)
+    setQuery('')
+    setOpen(false)
+    inputRef.current?.blur()
+  }
+
+  return (
+    <div className="ticker-search" ref={wrapRef}>
+      <input
+        ref={inputRef}
+        type="text"
+        value={query}
+        placeholder={tickers.length
+          ? `search ${tickers.length.toLocaleString()} tickers — symbol or name`
+          : 'loading…'}
+        onFocus={() => setOpen(true)}
+        onChange={e => { setQuery(e.target.value); setOpen(true) }}
+        onKeyDown={e => {
+          if (e.key === 'Enter' && filtered[0]) commit(filtered[0].symbol)
+          else if (e.key === 'Escape') { setOpen(false); setQuery('') }
+        }}
+      />
+      {open && tickers.length > 0 && (
+        <ul className="ticker-search-results" role="listbox">
+          {filtered.map(t => (
+            <li
+              key={t.symbol}
+              role="option"
+              onMouseDown={() => commit(t.symbol)}
+            >
+              <span className="result-symbol">{t.symbol}</span>
+              <span className="result-name">{t.name}</span>
+            </li>
+          ))}
+          {filtered.length === 0 && (
+            <li className="no-results">no match for "{query}"</li>
+          )}
+        </ul>
+      )}
+    </div>
   )
 }
 

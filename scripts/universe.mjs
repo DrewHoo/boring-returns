@@ -118,25 +118,72 @@ const ETF_SECTOR = [
 ]
 
 // --- Factor / style ETFs ---------------------------------------------
+// Includes the iShares MSCI single-factor suite, Russell style splits,
+// Vanguard size-and-style grid, the Avantis (AVUV et al.) and Dimensional
+// (DFAC/DFSV) families that systematic-factor investors actually buy,
+// and a handful of dividend / quality / cash-flow funds.
 const ETF_FACTOR = [
+  // iShares MSCI single-factor
   { symbol: 'MTUM', name: 'iShares MSCI USA Momentum Factor ETF' },
   { symbol: 'QUAL', name: 'iShares MSCI USA Quality Factor ETF' },
   { symbol: 'VLUE', name: 'iShares MSCI USA Value Factor ETF' },
   { symbol: 'USMV', name: 'iShares MSCI USA Min Vol Factor ETF' },
   { symbol: 'SIZE', name: 'iShares MSCI USA Size Factor ETF' },
+  { symbol: 'ACWV', name: 'iShares MSCI Global Min Vol Factor ETF' },
+  // Russell style splits
   { symbol: 'IWD',  name: 'iShares Russell 1000 Value ETF' },
   { symbol: 'IWF',  name: 'iShares Russell 1000 Growth ETF' },
   { symbol: 'IWN',  name: 'iShares Russell 2000 Value ETF' },
   { symbol: 'IWO',  name: 'iShares Russell 2000 Growth ETF' },
+  // S&P 500 style splits
   { symbol: 'IVW',  name: 'iShares S&P 500 Growth ETF' },
   { symbol: 'IVE',  name: 'iShares S&P 500 Value ETF' },
   { symbol: 'SPYG', name: 'SPDR S&P 500 Growth ETF' },
   { symbol: 'SPYV', name: 'SPDR S&P 500 Value ETF' },
+  { symbol: 'VOOG', name: 'Vanguard S&P 500 Growth ETF' },
+  { symbol: 'VOOV', name: 'Vanguard S&P 500 Value ETF' },
+  { symbol: 'RPG',  name: 'Invesco S&P 500 Pure Growth ETF' },
+  { symbol: 'RPV',  name: 'Invesco S&P 500 Pure Value ETF' },
+  { symbol: 'SPHQ', name: 'Invesco S&P 500 Quality ETF' },
+  // Vanguard size + style grid
   { symbol: 'MGK',  name: 'Vanguard Mega Cap Growth ETF' },
   { symbol: 'MGV',  name: 'Vanguard Mega Cap Value ETF' },
+  { symbol: 'VTV',  name: 'Vanguard Value ETF' },
+  { symbol: 'VUG',  name: 'Vanguard Growth ETF' },
+  { symbol: 'VOE',  name: 'Vanguard Mid-Cap Value ETF' },
+  { symbol: 'VOT',  name: 'Vanguard Mid-Cap Growth ETF' },
+  { symbol: 'VBR',  name: 'Vanguard Small-Cap Value ETF' },
+  { symbol: 'VBK',  name: 'Vanguard Small-Cap Growth ETF' },
+  // Dividend / cash-flow / quality
   { symbol: 'SCHD', name: 'Schwab U.S. Dividend Equity ETF' },
   { symbol: 'VIG',  name: 'Vanguard Dividend Appreciation ETF' },
   { symbol: 'VYM',  name: 'Vanguard High Dividend Yield ETF' },
+  { symbol: 'DGRO', name: 'iShares Core Dividend Growth ETF' },
+  { symbol: 'NOBL', name: 'ProShares S&P 500 Dividend Aristocrats ETF' },
+  { symbol: 'SDY',  name: 'SPDR S&P Dividend ETF' },
+  { symbol: 'COWZ', name: 'Pacer US Cash Cows 100 ETF' },
+  { symbol: 'PRF',  name: 'Invesco FTSE RAFI US 1000 ETF' },
+  // Avantis systematic-factor family
+  { symbol: 'AVUV', name: 'Avantis U.S. Small Cap Value ETF' },
+  { symbol: 'AVUS', name: 'Avantis U.S. Equity ETF' },
+  { symbol: 'AVLV', name: 'Avantis U.S. Large Cap Value ETF' },
+  { symbol: 'AVSC', name: 'Avantis Responsible U.S. Small Cap Equity ETF' },
+  { symbol: 'AVDE', name: 'Avantis International Equity ETF' },
+  { symbol: 'AVDV', name: 'Avantis International Small Cap Value ETF' },
+  { symbol: 'AVIV', name: 'Avantis International Large Cap Value ETF' },
+  { symbol: 'AVEM', name: 'Avantis Emerging Markets Equity ETF' },
+  { symbol: 'AVES', name: 'Avantis Emerging Markets Value ETF' },
+  { symbol: 'AVRE', name: 'Avantis Real Estate ETF' },
+  // Dimensional ETF suite (factor-tilt OG)
+  { symbol: 'DFAC', name: 'Dimensional U.S. Core Equity 2 ETF' },
+  { symbol: 'DFUS', name: 'Dimensional U.S. Equity ETF' },
+  { symbol: 'DFAS', name: 'Dimensional U.S. Small Cap ETF' },
+  { symbol: 'DFAT', name: 'Dimensional U.S. Targeted Value ETF' },
+  { symbol: 'DFLV', name: 'Dimensional U.S. Large Cap Value ETF' },
+  { symbol: 'DFSV', name: 'Dimensional U.S. Small Cap Value ETF' },
+  { symbol: 'DFIV', name: 'Dimensional International Value ETF' },
+  { symbol: 'DFIS', name: 'Dimensional International Small Cap ETF' },
+  { symbol: 'DFEM', name: 'Dimensional Emerging Markets Core Equity 2 ETF' },
 ]
 
 // --- Country / regional ETFs -----------------------------------------

@@ -128,7 +128,8 @@ main {
 .chip-control:hover {
   background: rgba(0,0,0,0.04);
 }
-.chip-control--active {
+.chip-control--active,
+.chip-control--active:hover {
   background: var(--ink);
   color: var(--bg);
   border-color: var(--ink);
@@ -172,10 +173,119 @@ main {
   color: var(--ink-muted);
 }
 
+/* --- Ticker search ------------------------------------------------- */
+.ticker-search {
+  position: relative;
+  flex: 1;
+  max-width: 360px;
+}
+.ticker-search input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  font-family: Georgia, serif;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  outline: none;
+}
+.ticker-search input:focus {
+  border-color: var(--accent);
+}
+.ticker-search-results {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 60;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+.ticker-search-results li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.ticker-search-results li:hover {
+  background: rgba(0,0,0,0.05);
+}
+.ticker-search-results .result-symbol {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
+  font-weight: 700;
+  min-width: 64px;
+}
+.ticker-search-results .result-name {
+  color: var(--ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.ticker-search-results .no-results {
+  color: var(--ink-muted);
+  font-style: italic;
+  cursor: default;
+}
+
+/* --- Background timeline (event markers behind leaderboard) -------- */
+.bg-timeline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-timeline-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed rgba(26, 24, 20, 0.18);
+}
+.bg-timeline-label {
+  position: absolute;
+  top: -32px;
+  left: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
+  white-space: nowrap;
+}
+.bg-timeline-year {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(26, 24, 20, 0.5);
+}
+.bg-timeline-tag {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(26, 24, 20, 0.36);
+}
+
 /* --- Leaderboard --------------------------------------------------- */
 .leaderboard {
-  margin-top: 12px;
+  position: relative;
+  margin-top: 40px;
   border-top: 1px solid var(--rule);
+}
+.row {
+  position: relative;
+  z-index: 1;
 }
 .row {
   display: flex;

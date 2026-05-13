@@ -115,7 +115,7 @@ export default function Row({
   }
 
   return (
-    <div className={detail ? 'row row--detail' : 'row'}>
+    <div className={detail ? 'row row--detail' : 'row'} data-row-symbol={data.symbol}>
       <button
         type="button"
         className="row-symbol"
