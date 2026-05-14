@@ -252,29 +252,43 @@ main {
   width: 0;
   border-left: 1px dashed rgba(26, 24, 20, 0.18);
 }
+/* Floating labels — pinned to the viewport so they stay readable as
+   the user scrolls through the leaderboard. Rendered as narrow
+   vertical strips (writing-mode: vertical-rl) so adjacent events
+   don't crowd each other even when only a few pixels apart. */
+.bg-timeline-labels {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
 .bg-timeline-label {
-  position: absolute;
-  top: -32px;
-  left: 0;
-  transform: translateX(-50%);
+  position: fixed;
+  top: 50vh;
+  /* Center the strip horizontally on the event's x; center
+     vertically on viewport midline. */
+  transform: translate(-50%, -50%);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 8px;
   font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
   white-space: nowrap;
+  line-height: 1;
+  pointer-events: none;
 }
 .bg-timeline-year {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: rgba(26, 24, 20, 0.5);
 }
 .bg-timeline-tag {
-  font-size: 9px;
-  letter-spacing: 0.1em;
+  font-size: 10px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(26, 24, 20, 0.36);
+  color: rgba(26, 24, 20, 0.4);
 }
 
 /* --- Leaderboard --------------------------------------------------- */

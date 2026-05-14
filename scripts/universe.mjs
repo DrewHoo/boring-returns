@@ -71,20 +71,39 @@ const STOCKS_EXTRA = [
 ]
 
 // --- Broad-market ETFs ------------------------------------------------
+// US total/large/mid/small + global + international total-market funds.
+// "Broad" here = whole-market exposure rather than a single sector,
+// factor, or country.
 const ETF_BROAD = [
+  // US — S&P 500
   { symbol: 'SPY',  name: 'SPDR S&P 500 ETF' },
   { symbol: 'IVV',  name: 'iShares Core S&P 500 ETF' },
   { symbol: 'VOO',  name: 'Vanguard S&P 500 ETF' },
+  // US — total / large / mid / small
   { symbol: 'VTI',  name: 'Vanguard Total Stock Market ETF' },
-  { symbol: 'QQQ',  name: 'Invesco QQQ Trust' },
-  { symbol: 'DIA',  name: 'SPDR Dow Jones Industrial Average ETF' },
-  { symbol: 'IWM',  name: 'iShares Russell 2000 ETF' },
-  { symbol: 'MDY',  name: 'SPDR S&P MidCap 400 ETF' },
-  { symbol: 'IJH',  name: 'iShares Core S&P Mid-Cap ETF' },
-  { symbol: 'IJR',  name: 'iShares Core S&P Small-Cap ETF' },
+  { symbol: 'ITOT', name: 'iShares Core S&P Total US Stock Market ETF' },
+  { symbol: 'SCHB', name: 'Schwab U.S. Broad Market ETF' },
+  { symbol: 'IWV',  name: 'iShares Russell 3000 ETF' },
+  { symbol: 'IWB',  name: 'iShares Russell 1000 ETF' },
+  { symbol: 'VV',   name: 'Vanguard Large-Cap ETF' },
+  { symbol: 'SCHX', name: 'Schwab U.S. Large-Cap ETF' },
   { symbol: 'OEF',  name: 'iShares S&P 100 ETF' },
   { symbol: 'XLG',  name: 'Invesco Top 50 ETF' },
-  { symbol: 'SCHB', name: 'Schwab U.S. Broad Market ETF' },
+  { symbol: 'MDY',  name: 'SPDR S&P MidCap 400 ETF' },
+  { symbol: 'IJH',  name: 'iShares Core S&P Mid-Cap ETF' },
+  { symbol: 'IWM',  name: 'iShares Russell 2000 ETF' },
+  { symbol: 'IJR',  name: 'iShares Core S&P Small-Cap ETF' },
+  // US — Nasdaq / Dow
+  { symbol: 'QQQ',  name: 'Invesco QQQ Trust' },
+  { symbol: 'DIA',  name: 'SPDR Dow Jones Industrial Average ETF' },
+  // International — total markets ex-US
+  { symbol: 'VXUS', name: 'Vanguard Total International Stock ETF' },
+  { symbol: 'IXUS', name: 'iShares Core MSCI Total International Stock ETF' },
+  { symbol: 'VEU',  name: 'Vanguard FTSE All-World ex-US ETF' },
+  // International — developed / emerging
+  { symbol: 'IEFA', name: 'iShares Core MSCI EAFE ETF' },
+  { symbol: 'IEMG', name: 'iShares Core MSCI Emerging Markets ETF' },
+  // Global
   { symbol: 'VT',   name: 'Vanguard Total World Stock ETF' },
   { symbol: 'ACWI', name: 'iShares MSCI ACWI ETF' },
 ]

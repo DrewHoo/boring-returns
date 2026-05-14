@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import {
   cagrColor,
   fmtPct,
@@ -11,9 +12,15 @@ import {
 } from './chart-utils.js'
 
 const CARD_W = 272
-const CARD_H = 200
 const SPARK_W = 240
 const SPARK_H = 50
+// Approximate rendered card heights — used only to decide whether
+// there's room to place the card above the row. The actual card is
+// laid out by the browser; we anchor by its bottom edge so we don't
+// need a precise number to position correctly. Mobile is taller
+// because the chip grid wraps to two columns (see styles.css).
+const CARD_H_DESKTOP = 280
+const CARD_H_MOBILE = 440
 
 export default function Tooltip({ data, monthIndex, hover }) {
   const k = monthIndex
@@ -53,29 +60,40 @@ export default function Tooltip({ data, monthIndex, hover }) {
     ? (1000 * (data.currentPrice / buyIn))
     : null
 
-  // Position the card. On touch, pin to viewport bottom.
-  const left = hover?.isTouch
-    ? Math.max(8, Math.min(window.innerWidth - CARD_W - 8, window.innerWidth / 2 - CARD_W / 2))
-    : (() => {
-        const barAbsX = (hover?.wrapLeft ?? 0) + hover.barX * (hover?.wrapWidth ?? 0)
-        let l = barAbsX - CARD_W / 2
-        l = Math.max(8, Math.min(window.innerWidth - CARD_W - 8, l))
-        return l
-      })()
+  // Position the card above the scrubbed row, horizontally centered
+  // on the bar. We anchor by `bottom` (so the card grows upward
+  // regardless of its actual height) when there's enough room above
+  // the row to fit it; otherwise we fall back to anchoring `top`
+  // below the row.
+  const barAbsX = (hover?.wrapLeft ?? 0) + hover.barX * (hover?.wrapWidth ?? 0)
+  const left = Math.max(
+    8,
+    Math.min(window.innerWidth - CARD_W - 8, barAbsX - CARD_W / 2),
+  )
 
-  const top = hover?.isTouch
-    ? (window.innerHeight - CARD_H - 16)
-    : Math.max(8, (hover?.rowTop ?? 0) - CARD_H - 12)
+  const isMobile = typeof window !== 'undefined'
+    && window.matchMedia('(max-width: 720px)').matches
+  const cardH = isMobile ? CARD_H_MOBILE : CARD_H_DESKTOP
+  const rowTop = hover?.rowTop ?? 0
+  const rowBottom = hover?.rowBottom ?? 0
+  const fitsAbove = rowTop > cardH + 20
 
-  return (
+  const verticalStyle = fitsAbove
+    ? { bottom: Math.max(8, window.innerHeight - rowTop + 12) }
+    : { top: Math.min(window.innerHeight - cardH - 8, rowBottom + 12) }
+
+  // Portal to body so we escape any row stacking context — otherwise
+  // later .row siblings (each with z-index:1) paint over the fixed
+  // tooltip when it visually overlaps them.
+  return createPortal(
     <div
       className="tooltip"
       style={{
         position: 'fixed',
         left,
-        top,
+        ...verticalStyle,
         width: CARD_W,
-        zIndex: 50,
+        zIndex: 1000,
         pointerEvents: 'none',
       }}
     >
@@ -103,7 +121,8 @@ export default function Tooltip({ data, monthIndex, hover }) {
       <div className="tooltip-caption">
         {fmtMoney(1000)} → <strong>{fmtMoney(dollars)}</strong> today
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

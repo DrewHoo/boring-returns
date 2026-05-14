@@ -1,9 +1,9 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 
-// Major financial events to mark behind the leaderboard. Dates picked
-// for the day everyone agrees was the inflection point — peak before
-// the bust, or the climactic crash day, depending on which is more
-// recognizable. Tags are intentionally terse.
+// Major financial events. The dashed verticals slice through the
+// leaderboard at the right month; the labels float fixed against the
+// viewport, rendered as narrow vertical strips so they don't crowd
+// the chart even when adjacent events sit only a few pixels apart.
 const EVENTS = [
   { yyyymm: '1987-10', year: '1987', tag: 'Black Monday' },
   { yyyymm: '2000-03', year: '2000', tag: 'dot-com peak' },
@@ -14,12 +14,13 @@ const EVENTS = [
   { yyyymm: '2022-01', year: '2022', tag: 'rate shock' },
 ]
 
-// Position events as vertical dashed lines spanning the leaderboard,
-// labeled at the top. Aligned to whichever row's chart-wrap is
-// currently mounted — all wraps share the same flex sizing, so the
-// first one we find is representative. Re-measures on resize.
 export default function BackgroundTimeline({ globalMonths }) {
+  // Two coordinate systems: `boardLeft` for the dashed marks (drawn
+  // inside .leaderboard), and `viewportLeft` for the labels (drawn
+  // position:fixed against the viewport). Vertical scroll doesn't
+  // shift either, so we only re-measure on resize.
   const [layout, setLayout] = useState(null)
+  const [inView, setInView] = useState(false)
 
   useLayoutEffect(() => {
     function measure() {
@@ -29,7 +30,8 @@ export default function BackgroundTimeline({ globalMonths }) {
       const wrapRect = wrap.getBoundingClientRect()
       const boardRect = board.getBoundingClientRect()
       setLayout({
-        left: wrapRect.left - boardRect.left,
+        boardLeft: wrapRect.left - boardRect.left,
+        viewportLeft: wrapRect.left,
         width: wrapRect.width,
       })
     }
@@ -44,32 +46,70 @@ export default function BackgroundTimeline({ globalMonths }) {
     }
   }, [globalMonths])
 
+  // Only paint the labels when an actual leaderboard row is sitting at
+  // the viewport's vertical midline — i.e. when rows are physically
+  // scrolling across where the labels would render. Anywhere else and
+  // they'd float over the masthead/methodology with nothing behind
+  // them, which reads as visual noise.
+  useEffect(() => {
+    const board = document.querySelector('.leaderboard')
+    if (!board) return
+    function check() {
+      const rect = board.getBoundingClientRect()
+      const center = window.innerHeight / 2
+      setInView(rect.top < center && rect.bottom > center)
+    }
+    check()
+    window.addEventListener('scroll', check, { passive: true })
+    window.addEventListener('resize', check)
+    return () => {
+      window.removeEventListener('scroll', check)
+      window.removeEventListener('resize', check)
+    }
+  }, [globalMonths])
+
   if (!layout || !globalMonths?.length) return null
 
   const totalMonths = globalMonths.length
   const firstMonth = globalMonths[0]
 
+  const placed = EVENTS.map(e => {
+    if (e.yyyymm < firstMonth) return null
+    const idx = globalMonths.indexOf(e.yyyymm)
+    if (idx < 0) return null
+    const frac = idx / (totalMonths - 1)
+    return {
+      ...e,
+      boardX: layout.boardLeft + frac * layout.width,
+      viewportX: layout.viewportLeft + frac * layout.width,
+    }
+  }).filter(Boolean)
+
   return (
-    <div className="bg-timeline" aria-hidden>
-      {EVENTS.map(e => {
-        // Skip events that fall outside the visible 40-year window.
-        if (e.yyyymm < firstMonth) return null
-        const idx = globalMonths.indexOf(e.yyyymm)
-        if (idx < 0) return null
-        const x = layout.left + (idx / (totalMonths - 1)) * layout.width
-        return (
+    <>
+      <div className="bg-timeline" aria-hidden>
+        {placed.map(e => (
           <div
             key={e.yyyymm}
             className="bg-timeline-mark"
-            style={{ left: `${x}px` }}
-          >
-            <div className="bg-timeline-label">
+            style={{ left: `${e.boardX}px` }}
+          />
+        ))}
+      </div>
+      {inView && (
+        <div className="bg-timeline-labels" aria-hidden>
+          {placed.map(e => (
+            <div
+              key={e.yyyymm}
+              className="bg-timeline-label"
+              style={{ left: `${e.viewportX}px` }}
+            >
               <span className="bg-timeline-year">{e.year}</span>
               <span className="bg-timeline-tag">{e.tag}</span>
             </div>
-          </div>
-        )
-      })}
-    </div>
+          ))}
+        </div>
+      )}
+    </>
   )
 }
