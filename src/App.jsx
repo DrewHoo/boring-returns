@@ -6,11 +6,15 @@ import BackgroundTimeline from './BackgroundTimeline.jsx'
 import { cagrColor, CAGR_NEUTRAL } from './chart-utils.js'
 
 const SORT_OPTIONS = [
-  { code: 'recent',   label: '10-year',   key: 'trailing10yCAGR', dir: 'desc' },
-  { code: 'lifetime', label: 'lifetime',  key: 'lifetimeCAGR',    dir: 'desc' },
-  { code: 'boring',   label: 'boring',    key: 'boringness',      dir: 'desc' },
-  { code: 'worst',    label: 'worst',     key: 'lifetimeCAGR',    dir: 'asc'  },
+  { code: 'oldest', label: 'oldest',       key: 'firstMonth',   dir: 'asc'  },
+  { code: 'boring', label: 'most boring',  key: 'boringness',   dir: 'desc' },
+  { code: 'alpha',  label: 'alphabetical', key: 'symbol',       dir: 'asc'  },
+  { code: 'worst',  label: 'worst',        key: 'lifetimeCAGR', dir: 'asc'  },
+  { code: 'best',   label: 'best',         key: 'lifetimeCAGR', dir: 'desc' },
 ]
+
+const DEFAULT_SORT = 'oldest'
+const DEFAULT_FILTER = 'etf-broad'
 
 const FILTER_OPTIONS = [
   { code: 'all',           label: 'all',             match: () => true },
@@ -25,13 +29,15 @@ const FILTER_OPTIONS = [
 ]
 
 function readInitialState() {
-  if (typeof window === 'undefined') return { t: null, s: 'recent', f: 'all' }
+  if (typeof window === 'undefined') {
+    return { t: null, s: DEFAULT_SORT, f: DEFAULT_FILTER }
+  }
   const params = new URLSearchParams(window.location.search)
   const t = (params.get('t') || '').toUpperCase().trim() || null
   const sRaw = (params.get('s') || '').toLowerCase()
-  const s = SORT_OPTIONS.find(o => o.code === sRaw)?.code || 'recent'
+  const s = SORT_OPTIONS.find(o => o.code === sRaw)?.code || DEFAULT_SORT
   const fRaw = (params.get('f') || '').toLowerCase()
-  const f = FILTER_OPTIONS.find(o => o.code === fRaw)?.code || 'all'
+  const f = FILTER_OPTIONS.find(o => o.code === fRaw)?.code || DEFAULT_FILTER
   return { t, s, f }
 }
 
@@ -80,8 +86,8 @@ export default function App() {
   useEffect(() => {
     const params = new URLSearchParams()
     if (selected) params.set('t', selected)
-    if (sort !== 'recent') params.set('s', sort)
-    if (filter !== 'all') params.set('f', filter)
+    if (sort !== DEFAULT_SORT) params.set('s', sort)
+    if (filter !== DEFAULT_FILTER) params.set('f', filter)
     const qs = params.toString()
     const next = qs
       ? `${window.location.pathname}?${qs}`
@@ -119,7 +125,9 @@ export default function App() {
       if (av == null && bv == null) return 0
       if (av == null) return 1
       if (bv == null) return -1
-      return (av - bv) * m
+      // `<`/`>` works for both numbers and YYYY-MM / symbol strings.
+      const cmp = av < bv ? -1 : av > bv ? 1 : 0
+      return cmp * m
     })
     return arr
   }, [filtered, sort])
@@ -149,26 +157,15 @@ export default function App() {
     <main>
       <header className="masthead">
         <h1>Boring Returns</h1>
-        <p className="subhead">
-          the long-run annualized return of the S&amp;P 500 — by long-run
-          convention, somewhere around ten percent a year, which is also,
-          by long-run convention, the most boring sentence ever to be
-          approximately true.
-        </p>
         <p className="lede">
-          Your brokerage shows you a line graph. The line goes up, more or
-          less, with the kind of jagged enthusiasm that line graphs have,
-          and you are meant to look at it and form some opinion about
-          whether to act. This is, on inspection, an absurd thing to ask
-          a person to do. Below — instead — is every ticker we could find,
-          rendered as a forty-year strip of monthly squares, each square
-          colored by the annualized return you would have earned had you
-          bought in that month and held until the present and refused,
-          with grim stoic dignity, to look at your account in between.
-          Ten percent a year — the historical American average; the polite
-          dinner-party answer to the question of what stocks do — is
-          rendered in tan, on the theory that the historical American
-          average should look exactly that exciting.
+          Your brokerage shows you a very sophisticated &ldquo;Chart+&rdquo;
+          that has so much information jammed into it, it&rsquo;s basically
+          designed with the express purpose of giving you anxiety. What you
+          really need to see is the average annualized return — because{' '}
+          <em>that&rsquo;s</em> what matters for your retirement portfolio.
+          So behold, a very boring graph of the performance of every
+          security you might care about. Because the best portfolio is
+          boring!
         </p>
       </header>
 
