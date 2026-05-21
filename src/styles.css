@@ -296,6 +296,10 @@ main {
   position: relative;
   margin-top: 40px;
   border-top: 1px solid var(--rule);
+  /* Scrubbing a row is a click-and-drag gesture; without this the
+     symbol or event labels get highlighted mid-drag. */
+  user-select: none;
+  -webkit-user-select: none;
 }
 .row {
   position: relative;
@@ -365,6 +369,10 @@ main {
   border-radius: 4px;
   padding: 10px 12px 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  /* Portaled to body, so it can't inherit the leaderboard's
+     user-select rule — set it locally too. */
+  user-select: none;
+  -webkit-user-select: none;
 }
 .tooltip-eyebrow {
   font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
